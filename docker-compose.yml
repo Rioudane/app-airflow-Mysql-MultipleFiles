@@ -1,15 +1,16 @@
 services:
   airflow:
     build: ./airflow
-    container_name: airflow_container
+    container_name: airflow_multiplefiles
     depends_on:
       - mysql
     environment:
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "mysql+pymysql://root:root@mysql:3306/data_ingestion"
+      AIRFLOW__LOGGING__REMOTE_LOGGING: "False"
     ports:
-      - "8081:8080"
+      - "8082:8080"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./data:/opt/airflow/data
@@ -33,12 +34,12 @@ services:
   mysql:
     image: mysql:8.0
     restart: always
-    container_name: Mysql_container
+    container_name: Mysql_multiplefiles
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: data_ingestion
     ports:
-      - "3309:3306"
+      - "3310:3306"
     networks:
       - pipeline
 

@@ -1,98 +1,69 @@
-# 📊 CSV to MySQL ETL Pipeline with Airflow & Docker (Dynamic CSV Support)
+**🚀 CSV to MySQL Pipeline with Airflow and Docker**
+This project implements a scalable data pipeline that loads one or more CSV files into a MySQL database
+using Apache Airflow. It uses csvsql to generate table schemas automatically from CSV headers, supports
+parallel processing, and is fully containerized with Docker.
 
-This project builds a fully automated ETL pipeline using **Apache Airflow**, **Docker**, and **MySQL**.
+**✨ Features**
+✅ Accepts multiple CSV files
 
-🔥 It automatically:
-- Detects a single `.csv` file inside the `data/` folder (mounted via Docker)
-- Derives the MySQL table name from the CSV file name (e.g., `medical_records.csv` → `medical_records`)
-- Generates the SQL schema using `csvkit`
-- Creates the table in MySQL
-- Loads the data using `pandas`
+✅ Auto-generates MySQL schema with csvsql
 
----
+✅ Loads data into MySQL
 
-## 🧱 Tech Stack
+✅ Parallel processing using Airflow
 
-- 🌀 Apache Airflow (workflow orchestration)
-- 🐬 MySQL 8.0 (relational database)
-- 🐳 Docker & Docker Compose (containerization)
-- 📦 csvkit (`csvsql` for schema generation)
-- 🐼 pandas (CSV ingestion)
+✅ Fully containerized with Docker and Docker Compose
 
----
+**🛠 Technologies Used**
+Apache Airflow – Workflow orchestration
 
-## 📁 Folder Structure
+MySQL – Relational database
 
+csvsql (from csvkit) – Schema generation
+
+Docker – Containerized runtime environment
+
+**⚙️ Configuration**
+The only required configuration is setting the CSV delimiter in the DAG file.
+
+In dags/load_to_database.py, set:
+delimiter = ','
+You can change this to ';', '\t', or any other delimiter that matches your CSV files.
+
+**📂 Project Structure**
 .
-├── airflow/
-│ └── Dockerfile # Custom Airflow image with csvkit
-├── dags/
-│ └── csv_to_mysql_dag.py # The Airflow DAG
-├── data/
-│ └── your_file.csv # Put your CSV here!
-├── docker-compose.yml
-├── plugins/
-├── logs/
+├── airflow/                      # Airflow environment setup
+│   ├── Dockerfile                # Custom Airflow Docker image
+│   └── airflow.cfg              # Airflow configuration
+│
+├── dags/                         # DAG files
+│   └── load_to_database.py      # Main DAG that processes CSV files
+│
+├── data/                         # Folder to place your CSV files
+│   └── your_files.csv
+│
+├── docker-compose.yml           
 └── README.md
 
----
+**▶️ Usage**
+Add your CSV files
+Place one or more .csv files inside the data/ folder.
 
-## ⚙️ How It Works
+Set your delimiter
+Open dags/load_to_database.py and adjust the delimiter variable if needed.
 
-1. **Dynamic Detection**  
-   The DAG scans `/opt/airflow/data/` for the first `.csv` file it finds.
-
-2. **Table Name Derivation**  
-   The table name is extracted from the CSV filename (e.g., `sales_data.csv` → `sales_data`).
-
-3. **Schema Generation**  
-   `csvsql` converts the CSV file into a `CREATE TABLE` SQL script.
-
-4. **Table Creation**  
-   MySQLHook executes the schema and creates the table.
-
-5. **Data Loading**  
-   `pandas.read_csv()` reads the CSV and loads it into MySQL using SQLAlchemy.
-
----
-
-## 🚀 How to Run
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/your-username/csv-to-mysql-airflow.git
-cd csv-to-mysql-airflow
-2. Add your CSV
-Put a single .csv file into the data/ directory.
-Example: data/medical_records.csv
-
-3. Start Docker Compose
+Build and run the pipeline
+In the root directory, run:
 
 docker-compose up --build
-Airflow UI: http://localhost:8081
-Login: admin / admin
 
-▶️ Trigger the DAG
-Open Airflow UI
+Access Airflow UI
+Navigate to: http://localhost:8082
 
-Locate the DAG: csv_to_mysql_dag
+Trigger the DAG
+Run the load_to_database DAG to start processing files.
 
-Click ▶️ "Trigger DAG"
 
-View execution via Graph View
-
-🧪 Example Query
-After the DAG completes, connect to MySQL:
-
-docker exec -it Mysql_container mysql -uroot -proot -e "USE data_ingestion; SHOW TABLES;"
-You should see your table named after the CSV file.
-
-💡 Limitations
-🚫 Only one .csv file should be placed inside the data/ folder.
-
-🚫 Does not support file validation or schema conflict detection (can be added later).
-
-👨‍💻 Author
-Made by ABDELGHAFOUR AIT ADDI 
-Email: aitaddiabdelghafour@gmail.com
+**👤 Made By**
+Abdelghafour AIT ADDI
+aitaddiabdelghafour@gmail.com
